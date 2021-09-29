@@ -50,13 +50,41 @@ end
 -- @param symbols {SymbolDefinition[]} symbols table got from CocAction('documentSymbols')
 -- @param curpos {Pos} cursor position to find nearest symbol
 -- @return {{ prev: SymbolDefinition, here: SymbolDefinition , next: SymbolDefinition }}
-function M:nearest_symbol(symbols, curpos)
+function M:nearest_symbols(symbols, curpos)
   local i = M:nearest_symbol_indices(symbols, curpos)
   return {
     prev = i['prev'] and symbols[i['prev'] + 1],
     here = i['here'] and symbols[i['here'] + 1],
     next = i['next'] and symbols[i['next'] + 1]
   }
+end
+
+-- @param symbols {SymbolDefinition[]} symbols table got from CocAction('documentSymbols')
+-- @param curpos {Pos} cursor position to find nearest symbol
+-- @return {number[]} 0-indexed indices
+function M:all_symbol_indices(symbols, curpos)
+  local all = {}
+  for i=1, #symbols do
+    local s = symbols[i]
+    if compare_pos(s['range']['start'], curpos) <= 0 then
+      if compare_pos(curpos, s['range']['end']) <= 0 then
+        table.insert(all, i - 1)
+      end
+    end
+  end
+  return all
+end
+
+-- @param symbols {SymbolDefinition[]} symbols table got from CocAction('documentSymbols')
+-- @param curpos {Pos} cursor position to find nearest symbol
+-- @return {SymbolDefinition[]}
+function M:all_symbols(symbols, curpos)
+  local all = {}
+  local is = M:all_symbol_indices(symbols, curpos)
+  for i=1, #is do
+    table.insert(all, symbols[is[i] + 1])
+  end
+  return all
 end
 
 -- @return {Pos}
