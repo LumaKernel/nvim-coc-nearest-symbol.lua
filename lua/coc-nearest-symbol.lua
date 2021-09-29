@@ -23,13 +23,6 @@ local compare_pos = function(lhs, rhs)
   return lhs['character'] - rhs['character']
 end
 
-function M:c (lhs, rhs)
-  if lhs['line'] ~= rhs['line'] then
-    return lhs['line'] - rhs['line']
-  end
-  return lhs['character'] - rhs['character']
-end
-
 -- @param symbols {SymbolDefinition[]} symbols table got from CocAction('documentSymbols')
 -- @param curpos {Pos} cursor position to find nearest symbol
 -- @return {{ prev: number , here: number , next: number }} 0-indexed indices
