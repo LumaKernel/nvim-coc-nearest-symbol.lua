@@ -17,10 +17,17 @@ local M = {}
 -- @param rhs {Pos}
 -- @return {number}
 local compare_pos = function(lhs, rhs)
-  if lhs.line ~= rhs.line then
-    return lhs.line - rhs.line
+  if lhs['line'] ~= rhs['line'] then
+    return lhs['line'] - rhs['line']
   end
-  return lhs.character - rhs.character
+  return lhs['character'] - rhs['character']
+end
+
+function M:c (lhs, rhs)
+  if lhs['line'] ~= rhs['line'] then
+    return lhs['line'] - rhs['line']
+  end
+  return lhs['character'] - rhs['character']
 end
 
 -- @param symbols {SymbolDefinition[]} symbols table got from CocAction('documentSymbols')
@@ -32,8 +39,8 @@ function M:nearest_symbol_indices(symbols, curpos)
   local next
   for i=1, #symbols do
     local s = symbols[i]
-    if 0 <= 0 then
-      if compare_pos(curpos, s['range']['start']) <= 0 then
+    if compare_pos(s['range']['start'], curpos) <= 0 then
+      if compare_pos(curpos, s['range']['end']) <= 0 then
         here = i - 1
       else
         prev = i - 1
